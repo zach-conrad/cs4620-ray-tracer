@@ -71,9 +71,21 @@ float trace_ray_distance(Vector3 origin, Vector3 direction)
     Vector3 abc = p.normalize();
     float d = -abc.dot(triangle.one);
 
+    // if the ray is parallel to the triangle it will never hit it
+    if (abc.dot(direction) == 0)
+      continue;
+
     float t = -(abc.dot(origin) + d) / abc.dot(direction);
 
-    if (t > closest_t || t <= 0)
+    // skip it if t is not a number
+    if (isnan(t))
+      continue;
+
+    // skip triangles that are behind the camera
+    if (t <= 0)
+      continue;
+
+    if (t > closest_t)
       continue;
 
     Vector3 collision_point = direction * t + origin;
@@ -138,9 +150,21 @@ Vector3 trace_ray(Vector3 origin, Vector3 direction, int bounces = 10)
     Vector3 abc = p.normalize();
     float d = -abc.dot(triangle.one);
 
+    // if the ray is parallel to the triangle it will never hit it
+    if (abc.dot(direction) == 0)
+      continue;
+
     float t = -(abc.dot(origin) + d) / abc.dot(direction);
 
-    if (t > closest_t || t <= 0)
+    // skip it if t is not a number
+    if (isnan(t))
+      continue;
+
+    // skip triangles that are behind the camera
+    if (t <= 0)
+      continue;
+
+    if (t > closest_t)
       continue;
 
 
@@ -228,7 +252,7 @@ int main()
       unsigned char b = background_color.z;
 
 
-      Vector3 target{
+      Vector3 target {
           x / (float)w * 2 - 1, -(y / (float)h * 2 - 1), 0};
 
       Vector3 temp = (target - camera_origin);
